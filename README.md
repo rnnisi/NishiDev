@@ -22,7 +22,7 @@ I developed it for my lab because we needed to scale up our process for testing 
 
 ### Architecture
 The software has one user facing end, which is a system of servers. The user and the sensor facing end can interact with these servers. 
-![SCHEME](https://github.com/rnnisi/NishiDev/blob/main/schematic.png)
+![SCHEME](https://github.com/rnnisi/NishiDev/blob/main/schematics.png)
 
 ### GUI
 This software uses a website as a GUI. The user can fill out HTML forms on the site to execute actions on the network. 
