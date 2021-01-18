@@ -3,6 +3,10 @@ There are bugs being fixed in the installation wrapper.
 Additionally, code is being developed to integrate other instruments in for more complete sensor testing capability. 
 Documentation will updated with developments. 
 
+Please contact me (rnnishide@gmail.com) for questions or concerns. 
+
+Estimated completion mid-March 2021
+
 ## Purpose
 This software is intended to help researchers test and subsequently optimize sensors which output analog signals. It will collect waveforms, displayed on an oscilloscope, over time. 
 
