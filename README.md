@@ -46,19 +46,16 @@ Installation wrapper will handle other requirements.
 - _thread
 - multiprocessing
 
-### Optional software
-- lxi-tools (requires API and peripheral software, see https://lxi-tools.github.io/) 
-
 ## Contents
 
 ### Initialize.sh
 Installation wrapper, run with sudo command to configre system and get necessary packages. 
 
 ### RigolDSS1000Z.py
-Library to adapt Rigol DS1000Z series scope for data acquisition. Runs with command line arguements for RunTime, Trigger status, and optionally channels 
+Library to adapt Rigol DS1000Z series scope for data acquisition. There are a lot of functions written into this library that are not used in the actual script that is run. This was left in for potential future developers. This code runs by using SCPI to communicate with the oscilloscope. 
 
 ### USB_Run.py
-Sensor facing program, run to get data by integrating oscilloscope into system. Scope and Pi running program should be connected via USB cable. 
+Sensor facing program, run to get data by integrating oscilloscope into system. Scope and Pi running program should be connected via USB cable.  Runs with command line arguements for RunTime, Trigger status, and optionally channels.
 
 ### ExpLog.txt 
 Track runs
@@ -82,8 +79,7 @@ Run with crontab on sensor facing Pi so that Pi listens to control servers and e
 Runs in background on sensor facing Pi so that Pi can listen to troubleshooting requests while running jobs. 
 
 ### /UserEnd
-Contains all code needed to run on server and support online GUI. 
-
+Contains all code needed to run on server and support online GUI. Scripting done in PHP, structured in HTML, CSS styling. 
 
 
 ## Important Notes for Use
