@@ -51,9 +51,11 @@ Installation wrapper will handle other requirements.
 - multiprocessing
 
 ## Contents
+### GetNishiDev.sh
+Shell script which will get a raspberry-pi ready to run this softare and pull code from this repo. Intended for users who are not familiar with linux installations or programming in general. Users must email me to get permission to run this script. 
 
 ### Initialize.sh
-Installation wrapper, run with sudo command to configre system and get necessary packages. 
+Installation wrapper, run with sudo command to configre system and get necessary packages. Intended to allow users who are not familiar with linux terminal to confgure this software's architecture. 
 
 ### RigolDSS1000Z.py
 Library to adapt Rigol DS1000Z series scope for data acquisition. There are a lot of functions written into this library that are not used in the actual script that is run. This was left in for potential future developers. This code runs by using SCPI to communicate with the oscilloscope. 
