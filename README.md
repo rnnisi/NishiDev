@@ -29,9 +29,13 @@ This software uses a website as a GUI. The user can fill out HTML forms on the s
 ![GUI](https://github.com/rnnisi/NishiDev/blob/main/Figures/GUI.png)
 
 ### Use Case
-The imagined use case is data acquistion of sensor output over a long period of time. It can be assumed that it takes about 30 seconds to collect each waveform. A target measurement, indicitave of the performance aspect of the device being collected, can be taken from each waveform. Thus collection over time yields statistically significant data. This can be used to optimzie sensors, becuase it is an easy and precise method to test many similar prototypes for one performance aspect. 
+To use this software, the instrument which is to be integrated to test the sensor should be hardwired to an rpi running sensor facing scripts. The researcher can then specify what the integrated instrument should be doing by remote control from the website interface. This software is designed for general use and so that many intruments may be integrated. Thus the researcher may use their discretion as to how the sensor will be tested for the desired performance aspect. The Pi connected to each intrument needs to be properly configured (done by the Initialize shell script), and connected to the local network. 
 
+So far, the integration of a Rigol Oscilloscope for waveform acquisition has been thouroughly tested. Thus data acqusition and sorganization into a data base is robust. Integration of a function generator has been acheived, and I am currently working on improving error handling and usability. This repo will be updated as I progress.
 
+The imagined use case is data acquistion of sensor output over a long period of time. It can be assumed that it takes about 30 seconds to collect each waveform. A target measurement, indicitave of the performance aspect of the device being collected, can be taken from each waveform. Thus collection over time yields statistically significant data. This can be used to optimize sensors, becuase it is an easy and precise method to test many similar prototypes for one performance aspect. This is not achievable normally with such a low-cost system. 
+
+![UseCase](https://github.com/rnnisi/NishiDev/blob/main/Figures/UseCase.png)
 ## Program Configuration and Requirements
 This program is meant to be run on a Linux OS on a Rapberry Pi.
 
