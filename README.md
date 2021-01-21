@@ -22,11 +22,11 @@ I developed it for my lab because we needed to scale up our process for testing 
 
 ### Architecture
 The software has one user facing end, which is a system of servers. The user and the sensor facing end can interact with these servers. 
-![SCHEME](https://github.com/rnnisi/NishiDev/blob/main/schematics.png)
+![SCHEME](https://github.com/rnnisi/NishiDev/blob/main/Figures/Schematic.png)
 
 ### GUI
 This software uses a website as a GUI. The user can fill out HTML forms on the site to execute actions on the network. 
-![GUI](https://github.com/rnnisi/NishiDev/blob/main/GUI.png)
+![GUI](https://github.com/rnnisi/NishiDev/blob/main/Figures/GUI.png)
 
 ### Use Case
 The imagined use case is data acquistion of sensor output over a long period of time. It can be assumed that it takes about 30 seconds to collect each waveform. A target measurement, indicitave of the performance aspect of the device being collected, can be taken from each waveform. Thus collection over time yields statistically significant data. This can be used to optimzie sensors, becuase it is an easy and precise method to test many similar prototypes for one performance aspect. 
