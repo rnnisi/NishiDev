@@ -8,12 +8,12 @@ Please contact me (rnnishide@gmail.com) for questions or concerns.
 Estimated completion mid-March 2021
 
 ## Purpose
-This software is intended to help researchers test and subsequently optimize sensors which output analog signals. It will collect waveforms, displayed on an oscilloscope, over time. 
+This software is intended to help researchers test and subsequently optimize sensors which output analog signals. It will collect waveforms, displayed on an oscilloscope, over time. Due to a website GUI and installtion wrappers, there is no need for users to have comfort with any soft of programming. If users would like to develop the software further, there are loopholes written in where many capabilities or alternative uses may be developed accross all code. For example, the existing framework may serve as a useful template for integrating any other SCPI enabled test intruments. 
 
-This software fascilliates remote control of automated data collection by adapting an oscilloscope with software for a raspberry pi. Remote control for researchers is executed by a system of servers, which are the "User End" of the software. The researcher can access the end system, a website GUI, to request experiments or other actions. Raspberry Pi's should get a copy of the NishiDev software and be configured on the network such that they can receieve requests from the end system. All devices should be on a local host, such that the end system can be accessed from any endpoint w
+This software fascilliates remote control of automated data collection by adapting an oscilloscope with software for a raspberry pi. Remote control for researchers is executed by a system of servers, which are the "User End" of the software. The researcher can access the end system, a website GUI, to request experiments or other actions. Raspberry Pi's should get a copy of the NishiDev software and be configured on the network such that they can receieve requests from the end system. All devices should be on a local host, such that the end system can be accessed from any endpoint. Data is organized into an online data base as it is generated. The online data base can backed up automatically, and analysis can be done automatically with scripts submitted by users. These capabilities will be customized by the user, not directly written in, because the program is intended for general use. 
+
 ith a browser and wifi capability connected to the local host. For true remote capability, a VPN should be used to access the local network.
- 
-This software also handles data organization into an online and local data base. It is reccomended that some system to pull and back-up data be implemented to avoid running out of storage on nodes. This code has loopholes such that other devices can be adapted into the system, such as a function generator or power supply, with other SCPI enabled intruments. 
+
 
 I developed it for my lab because we needed to scale up our process for testing sensors at a low cost. 
 
@@ -38,13 +38,25 @@ The imagined use case is data acquistion of sensor output over a long period of 
 The image below depicts a 12 hour full use case I executed to test my software with a single photon detector. 
 
 ![UseCase](https://github.com/rnnisi/NishiDev/blob/main/Figures/UseCase.png)
-## Program Configuration and Requirements
+## Program Requirements
 This program is meant to be run on a Linux OS on a Rapberry Pi.
 
-Installation wrapper will handle other requirements. 
+Installation wrapper will check your if your computer is compatible and install all necessary packages and libraries (with permission). 
 
-### Other Packages
+### Hardware Necessities 
+- Rapberry Pi with Wifi (one per instrument)
+- Rigol DS1000 series oscilloscope (others may be compatible, have only tested this series)
+- Siglent SDG1032X Function generator (if desired)
+- local host
+- VPN to local host (optional for true remote control)
+- Additional memory space (optional for automated data transfer and analysis)
+
+###  Software Necessities 
 - Apache 
+- python3 environment
+- linux shell environment
+- crontab
+
 
 ### Python Libraries 
 - pyvisa
@@ -64,8 +76,10 @@ Shell script which will get a raspberry-pi ready to run this softare and pull co
 Installation wrapper, run with sudo command to configre system and get necessary packages. Intended to allow users who are not familiar with linux terminal to confgure this software's architecture. 
 
 ### RigolDSS1000Z.py
-Library to adapt Rigol DS1000Z series scope for data acquisition. There are a lot of functions written into this library that are not used in the actual script that is run. This was left in for potential future developers. This code runs by using SCPI to communicate with the oscilloscope. 
+Library to adapt Rigol DS1000Z series scope for data acquisition. There are a lot of functions written into this library that are not used in the actual script that is run. This was left in for potential future developers. This code runs by using SCPI to communicate with the oscilloscope. Generates data and experiment logs which are uploaded synchronously to online data base. 
 
+### FunctionGenerator.py
+Control a function generator. Takes remote control commands to turn outputs on and off, specify output type, specify parameters of output, and specify wait times between changes in output. Will also log all changes made to system, and the status of the system after each change. Data will be uploaded to data base. 
 ### USB_Run.py
 Sensor facing program, run to get data by integrating oscilloscope into system. Scope and Pi running program should be connected via USB cable.  Runs with command line arguements for RunTime, Trigger status, and optionally channels.
 
@@ -90,8 +104,11 @@ Run with crontab on sensor facing Pi so that Pi listens to control servers and e
 ### check_reset.sh
 Runs in background on sensor facing Pi so that Pi can listen to troubleshooting requests while running jobs. 
 
+### DataRefresh.sh (coming soon!)
+Backup data to a more powerful computer. Wipe data from RPi's periodically to avoid running out of memory. Optionally will automatically run analysis scripts and add  files with more specific data to experimental directories. (Useful if one Pi is running the same experiment over and over again, avoid manually analyzing data). There will be an option added to the GUI to submit analyis scripts to be run automatically. 
+
 ### /UserEnd
-Contains all code needed to run on server and support online GUI. Scripting done in PHP, structured in HTML, CSS styling. 
+Contains all code needed to run on server and support online GUI. Scripting done in PHP, structured in HTML, CSS styling. Live updates for data acqusition, run requests, and devices status. This is the support and the actual code for the endsystem. Any device accessing the control panel from a browser to submit requests or get data is intended endpoint. The website is intended as a user friendly GUI. Along with the installation wrappers, this should circumvent any need for users to have any programming savvy. 
 
 
 ## Important Notes for Use
