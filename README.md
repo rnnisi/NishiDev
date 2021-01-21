@@ -35,6 +35,8 @@ So far, the integration of a Rigol Oscilloscope for waveform acquisition has bee
 
 The imagined use case is data acquistion of sensor output over a long period of time. It can be assumed that it takes about 30 seconds to collect each waveform. A target measurement, indicitave of the performance aspect of the device being collected, can be taken from each waveform. Thus collection over time yields statistically significant data. This can be used to optimize sensors, becuase it is an easy and precise method to test many similar prototypes for one performance aspect. This is not achievable normally with such a low-cost system. 
 
+The image below depicts a 12 hour full use case I executed to test my software with a single photon detector. 
+
 ![UseCase](https://github.com/rnnisi/NishiDev/blob/main/Figures/UseCase.png)
 ## Program Configuration and Requirements
 This program is meant to be run on a Linux OS on a Rapberry Pi.
