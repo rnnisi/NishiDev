@@ -122,4 +122,4 @@ Sometimes the scope freezes or will reset, and you may need to be physically pre
 ### This is for testing purposes, it is not replacement for fast data acqusition systems.
 It takes about a second to get each waveform; getting four waveforms takes four seconds. 
 
-
+teststetse
