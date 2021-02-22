@@ -110,7 +110,63 @@ Backup data to a more powerful computer. Wipe data from RPi's periodically to av
 ### /UserEnd
 Contains all code needed to run on server and support online GUI. Scripting done in PHP, structured in HTML, CSS styling. Live updates for data acqusition, run requests, and devices status. This is the support and the actual code for the endsystem. Any device accessing the control panel from a browser to submit requests or get data is intended endpoint. The website is intended as a user friendly GUI. Along with the installation wrappers, this should circumvent any need for users to have any programming savvy. 
 
+## For Future Developers
 
+### Syntax for instrument control commands 
+
+Each run is dictated by a Request, given its own ID, which contains all the information for configuration and data collection for the duration of the run. 
+
+This program uses its own syntax to publish requests such that requests are able to be easily processed by Pi's on the sensor ends. The basic mechanism for front to back-end communication (user to sensor end) is scraping. The Pi's running sensor test programs are constantly scraping the "requests.txt" page, looking for command adressed to them. The commands are published with the following syntax such that the sensor test programs can interpret and execute them. 
+
+| Characters | Meaning |
+| --- | --- |
+| Req_xxx: | First line of new request, this is the ID of the request|
+| ; | Seperates information | 
+| & | New set of commands to follow for Function generator program to execute | 
+| $1=$2 | $1 is some parameter specific to a certain command, $2 is the value that parameter should be set to | 
+| , | Seperates parameter specifiers meant for one action| 
+| ! | End of command set | 
+
+Each new Request is on a new line in "requests.txt". It is reccomended that additional characters, such as "+, -, <, >" and so on. Use of these characters to standardize the commands sent between ends is to avoid complications due to string processing between different languages and environments. 
+
+### RunFiles
+
+Reseachers often want to replicate runs, or change just one thing from the last run. Therefore it is an option to import old "RunFiles", or sets of commands, to avoid tediously retyping in every experiment. 
+
+This is really just parsing the requests.txt for the run, given by ID, and then loading that line. 
+
+This line is displayed as text which can be edited to alter small parameters. 
+
+### Structure of Peripheral Instrument Control Python Classes
+
+The python script which controls the oscilloscope for data collection is relatively difficult to generalize. However control and automation of peripheral instruments intended for controlling aspects of the sensor environment; such as a function generator, variable power source, or light, are much more basic to interact with. 
+
+This software structures the python scripts for control and automation of these peripheral instruments such that more intruments may be added by future developers using the same framework. 
+
+The peripheral intrument control python scripts receieve commands as published onto the requests page. Each peripheral intrument will recieve commands from the Pi communicating with the oscilloscope, such that the Pi connected to the scope may be thought of as the master node for that sensor environment. The Pi's connected to peripheral intruments will recieve commands via scraping the "subrequests.txt" page that the master node publishes. Then those commands will be sent as input arguements to run the peripheral intrument control scripts. 
+
+Each peripheral intrument should be connected to one raspberry pi running the approrpiate software. These peripheral intruments generally have basic one line commands. For example for a function generator, say a researcher wants to collect data for one hour with a controlled input electronic signal: 
+
+  Turn on channel 1
+  Output a sine wave with a 1V peak to peak amplitude at frequence = 10kHz from channel 1
+  Turn off channel 1 after 1 hour
+
+The sensor facing program attachted to the function generator will receieve commands specifying this run from the master node, which is executing 1 hour data collection. Each command for the function generator will be in the following structure: 
+  & Channel, Action, Parameters 
+ 
+ Which in this case will look like the following commands: 
+ 
+  & 1; ON, 
+  & 1; SINE; freq=10kHz  Vpp=1.0V
+  & 1; WAIT; time=3600
+  & 1; OFF
+ 
+This data is processed via string processing and passed to the sensor facing program communicating with the function generator as command line arguements. "WAIT" indicates that the processing program should wait before passing the following command to the function generator, sucht that channel 1 will output a sine wave as desired for a full hour before turning off. The program controlling the function generator is a class of functions which uses SCPI to execute actions desired. Each function is entered into a dictionary. The key is the command given in a request, while the value is the name of the function. Thus, the first command line arguement may be used as a key to return the function the user asked for. Following parameters are arguements for that function. 
+
+After each command, the status of the intrument is requested, recieved, and reccorded such that a researcher may check if there were any issues during the run. That data log will be submitted to the appropriate experimental directory via HTML forms so that all information on the run is found in the same place. 
+
+This structure may be replicated for many other intruments that use SCPI to increase control over the environment the sensor is tested in. 
+  
 ## Important Notes for Use
 
 ### What you see is what you get. 
