@@ -1,7 +1,18 @@
 # NishiDev Documentation (WIP)
-There are bugs being fixed in the installation wrapper. 
-Additionally, code is being developed to integrate other instruments in for more complete sensor testing capability. 
-Documentation will updated with developments. 
+Things I am actively working on: 
+
+Integrating function generator 
+
+Establishing framwork with loopholes and infrastructure for future developers to expand and improve this software 
+
+Debugging everything 
+
+Organizing, commenting, documenting
+
+Adding in automated data handling for storage purposes (integrating capability for high storage capacity hard-drive)
+
+Adding in convenient features for user end (automated analysis, saving runs to replicate, so on...) 
+
 
 Please contact me (rnnishide@gmail.com) for questions or concerns. 
 
