@@ -17,7 +17,7 @@ class SiglentSDG1000X:
 		self.AssignOutFile = "'FG-Run_' + str(i)"
 		self.args = sys.argv
 		self.Actions = {}
-		self.path = subprocess.check_output(["pwd"], shell=True).decode(encoding = 'uTF-8', errors='strict').strip() + "/"
+		self.path = "/home/pi/NishiDev1.0/FG/"
 		self.keys = ["OUT_ON", "OUT_OFF", "SINE", "SQUARE", "RAMP", "PULSE", "NOISE", "ARB", "DC", "PRBS", "FREQ", "PERIOD", "VPP", "OFFSET", "PHASE", "WAIT"]
 		self.Actions.update({ "OUT_ON" : "self.TurnOutputOn(channel)"})
 		self.Actions.update({ "OUT_OFF" : "self.TurnOutputOff(channel)"})
