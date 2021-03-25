@@ -40,6 +40,5 @@ sudo pip3 install pyvisa
 sudo pip3 install pyvisa-py
 
 # clone from github with https 
-# need to request access from me to use. 
 
-git clone https://github.com/rnnisi/RigolDS1054Z.git
+git clone https://github.com/rnnisi/NishiDev.git
