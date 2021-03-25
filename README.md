@@ -1,11 +1,16 @@
 # NishiDev Documentation (WIP)
+
 ## Beta test:
 
 I am pre-loading the software onto three raspberry pi's, listed here by hostname:
-**CNTRL-Beta**: acts as server for control panel, remote capabilities 
-**MASTER-Beta**: Acts as master node, communicates with oscilloscope to collect data and delegates to function generator 
-**FG-Beta**: servant to master node, communicates with function generator. 
+* * * 
+**CNTRL-Beta**: acts as server for control panel, remote capabilities (pi0w)
 
+**MASTER-Beta**: Acts as master node, communicates with oscilloscope to collect data and delegates to function generator (pi3)
+
+**FG-Beta**: servant to master node, communicates with function generator. (pi0)
+* * *
+I was able to do these configurations by running installation wrappers in the /home/pi directory. It was necessary to already have crontab set up (an editor picked) before running the wrapper for it to work. I believe the installation wrappers are mostly effective at this point, but they may have more bugs, which is why i pre-loaded three pi's with fresh SD cards for the beta test. 
 
 
 ## Purpose
