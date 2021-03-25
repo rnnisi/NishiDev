@@ -5,15 +5,15 @@ read -p "Enter the number of channels the scope has as an integer : " CHANNELS
 CHANNELS="$CHANNELS"
 read -p "Enter the serial number of the scope : " SERIAL
 SERIAL="$SERIAL" 
-read -p "Enter a nickname for this scope/pi pair : " NICKNAME
-NICKNAME="$NICKNAME"
+
+NICKNAME=$(hostname)
 
 # customize software to specifications
 sed -i 's/CHANNELS/'$CHANNELS/ RigolDS1000Z.py
 sed -i 's/SERIAL/'$SERIAL/ RigolDS1000Z.py
 sed -i 's/NICKNAME/'$NICKNAME/ RigolDS1000Z.py ConfigureOnlineDB.sh DataTransfer.py check_requests.sh
 
-LOCAL="/home/pi"
+LOCAL="/home/pi/NishiDev1.0/Master"
 
 sed -i 's/LOCAL/'$LOCAL/ RigolDS1000Z.py ConfigureOnlineDB.sh DataTransfer.py check_requests.sh
 
