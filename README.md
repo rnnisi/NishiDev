@@ -1,22 +1,12 @@
 # NishiDev Documentation (WIP)
-Things I am actively working on: 
+## Beta test:
 
-Integrating function generator 
-
-Establishing framwork with loopholes and infrastructure for future developers to expand and improve this software 
-
-Debugging everything 
-
-Organizing, commenting, documenting
-
-Adding in automated data handling for storage purposes (integrating capability for high storage capacity hard-drive)
-
-Adding in convenient features for user end (automated analysis, saving runs to replicate, so on...) 
+I am pre-loading the software onto three raspberry pi's, listed here by hostname:
+**CNTRL-Beta**: acts as server for control panel, remote capabilities 
+**MASTER-Beta**: Acts as master node, communicates with oscilloscope to collect data and delegates to function generator 
+**FG-Beta**: servant to master node, communicates with function generator. 
 
 
-Please contact me (rnnishide@gmail.com) for questions or concerns. 
-
-Estimated completion mid-April 2021
 
 ## Purpose
 This software is intended to help researchers test and subsequently optimize sensors which output analog signals. It will collect waveforms, displayed on an oscilloscope, over time. Due to a website GUI and installtion wrappers, there is no need for users to have comfort with any soft of programming. If users would like to develop the software further, there are loopholes written in where many capabilities or alternative uses may be developed accross all code. For example, the existing framework may serve as a useful template for integrating any other SCPI enabled test intruments. 
