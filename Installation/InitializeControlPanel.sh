@@ -22,6 +22,6 @@ sudo chmod a+w /var/www
 sudo chmod a+w /var/www/html/
 
 echo "Setting up control panel"
-sudo mv -r /home/pi/NishiDev1.0/OnlineControl /var/www/html
+sudo mv /home/pi/NishiDev1.0/OnlineControl /var/www/html
 
-echo "Control panel should now be accessible at url: $NICKNAME.local/control_panel/control_panel.php"
+echo "Control panel should now be accessible at url: $NICKNAME.local/OnlineControl/control_panel.php"
