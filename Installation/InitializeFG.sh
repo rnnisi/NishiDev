@@ -17,7 +17,7 @@ NICKNAME=$(hostname)
 
 LOCAL="/home/pi/NishiDev1.0/FG"
 
-sed -i 's/SET_MASTER/'$MASTER/ $LOCAL/check_FGrequests.txt
+sed -i 's/SET_MASTER/'$MASTER/ $LOCAL/check_FGrequests.sh
 
 sudo chmod +x $LOCAL/*.py
 sudo chmod +x $LOCAL/*.sh
