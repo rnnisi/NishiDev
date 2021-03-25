@@ -41,4 +41,4 @@ sudo pip3 install pyvisa-py
 
 # clone from github with https 
 
-git clone https://github.com/rnnisi/NishiDev.git
+git clone https://github.com/rnnisi/NishiDev1.0.git
