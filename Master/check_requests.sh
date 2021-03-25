@@ -1,11 +1,10 @@
 #!/bin/bash
 
 # read from server instead of own pi so that this works on other pis. need static ip 
-
-PROGPATH="LOCAL_DIR"
-SERVER_PI="PANEL_IP"
+# Run on master pi (connected to scope)
+SERVER_PI="rnnishiPI0w"
 RAW=$(ping ${SERVER_PI}.local -c 1)
-echo $RAW
+LOCAL="/home/pi/Master"
 if [[ $(echo $RAW | grep "cannot\ resolve" | wc -l) -ne 0 ]]
 then
     echo "Cannot find IP for pi hosting control panel."
@@ -15,16 +14,18 @@ fi
 
 IP="$(echo $RAW | cut -d' ' -f11)"
 
-STAT=$(sed '3q;d' ${PROGPATH}/memory.txt)
+STAT=$(sed '3q;d' $LOCAL/memory.txt)
 NOW=$(curl "${IP}/control_panel/requests.txt")
-UPDATE="${IP}/control_panel/GetUpdate.php"
-SELF="NICKNAME"
-declare -i I_0=$(sed '2q;d' ${PROGPATH}/memory.txt)
-declare -i I=$(echo $NOW | grep -o '!' | wc -l)
-echo $NOW
+UPDATE="${SERVER_PI}.local/control_panel/GetUpdate.php"
+SELF="rnnishipi0w"
+declare -i I_0=$(sed '2q;d' $LOCAL/memory.txt)
+declare -i I=$(echo $NOW | grep -o ' $ ' | wc -l)+1
+echo "now" $NOW
 echo 
 echo "I_0 " $I_0
 echo "I " $I
+#I_0=0 ## REMOVE LATER
+#I=1001 ## REMOVE LATER
 if [[ $I_0 -eq $I ]]
 then	
 	exit
@@ -32,18 +33,26 @@ fi
 
 echo "Processing Request..."
 
-${PROGPATH}/check_reset.sh >/dev/null 2>&1 &
+$LOCAL/check_reset.sh >/dev/null 2>&1 &
 FOO_PID=$!
 
 for (( i=$I_0+1; $i <=$I; i++ )); do
 	echo $i
-	VAL="$(echo $NOW | cut -d'!' -f$i)"
+	VAL="$(echo $NOW | cut -d'$' -f$i)"
+	echo "val" $VAL
+	FG="$(echo $VAL | cut -d'!' -f2)"
+	echo "FG" $FG
+	if [[ $(echo $FG | grep "&" | wc -l) -ne 0 ]]
+	then 
+		fgg="True"
+	fi
+	SCOPE="$(echo $VAL | cut -d'!' -f1)"
+	echo "scope" : $SCOPE
 	N=$(echo $VAL | grep "$SELF" | wc -l)
+	echo "N" $N
 	GO=$(echo $VAL | grep "CANCELLED" | wc -l)
 	LIVE=$(echo $VAL | grep "RESET" | wc -l)
 	DONE=$(echo $VAL | grep "done" | wc -l)
-	SUBMITTED=$(echo $VAL | grep "submitted" | wc -l)
-	QUEUE=$(echo $VAL | grep "queued" | wc -l)
 	IDLE=$(echo $VAL | grep "IDLE" | wc -l)
 	if [[ $N -eq 0 ]] || [[ $GO -ne 0 ]] || [[ $DONE -ne 0 ]] || [[ $IDLE -ne 0 ]]
 	then
@@ -54,41 +63,41 @@ for (( i=$I_0+1; $i <=$I; i++ )); do
 		kill $FOO_PID
 		exit
 	fi
-	REQN="$(echo $VAL | cut -d';' -f1)"
+	REQN="$(echo $SCOPE | cut -d';' -f1)"
 	REQN="$(echo $REQN | sed -e 's/\ //g')"
+	echo $REQN
+	#STAT="go" ## REMOVE LATER
 	if [[ "$STAT" == "busy" ]]	# if scope is not busy continue 
 	then
-		if [[ $SUBMITTED -eq 0 ]] 
-		then
-			echo "pi/scope pairing is busy"
-			if [[ $QUEUE -eq 0 ]]
-			then
-				curl "${UPDATE}?ReqN=${REQN}&stat=queued&press=done"
-			fi
-			kill $FOO_PID
-			exit
-		else
-			kill $FOO_PID
-			exit
-		fi
+		echo "pi/scope pairing is busy"
+		curl "${UPDATE}?ReqN=${REQN}&stat=queued&press=done"
+		kill $FOO_PID
+		exit
 	fi
 	if [[ $N -ne 0 ]]	# if nickname matches this pi continue
 	then
-		echo "Updating memory .... "
-		RT="$(echo $VAL | cut -d';' -f3)"
+		echo "accepting job"
+		RT="$(echo $SCOPE | cut -d';' -f3)"
 		RT="$(echo $RT | sed -e 's/\ //g')"
-		TRIG="$(echo $VAL | cut -d';' -f4)"
+		TRIG="$(echo $SCOPE | cut -d';' -f4)"
 		TRIG="$(echo $TRIG | sed -e 's/\ //g')"
-		CHANS="$(echo $VAL | cut -d';' -f5)"
+		CHANS="$(echo $SCOPE | cut -d';' -f5)"
 		CHANS="$(echo $CHANS | sed -e 's/\ //g' | sed -e 's/,/\ /g')"
 		echo "RunTime" $RT
 		echo "Trigger" $TRIG
 		echo "Channels" $CHANS
-        curl "${UPDATE}?ReqN=${REQN}&stat=submitted&press=done"
+        echo "$fgg"
+		if [[ "$fgg" == "True" ]]
+		then
+			echo $fgg
+			echo "ID_$REQN*$FG" > /var/www/html/forFG/RunSpecs.txt
+		fi
+		
+		curl "${UPDATE}?ReqN=${REQN}&stat=submitted&press=done"
 		((ST=$(echo $SECONDS)))
-		python3 ${PROGPATH}/USB_Run.py $RT $TRIG $CHANS >/dev/null 2>&1
+		python3 $LOCAL/USB_Run.py $RT $TRIG $CHANS >/dev/null 2>&1
 		(( rt = $SECONDS-ST ))
-		echo $rt
+		echo "Data Collection Time: " $rt
 		if [[ (( $SECONDS-ST < $RT+10 )) ]]
 		then
 			curl "${UPDATE}?ReqN=${REQN}&stat=doneCrash&press=done"
@@ -102,17 +111,18 @@ done
 
 EXIT_RAW=$(curl "${IP}/control_panel/requests.txt")
 RS=$(echo $EXIT_RAW | grep "RESET" | wc -l)
-EMPTY=$(echo $EXIT_RAW | grep "Req_" | wc -l)
+EMPTY=$(echo $EXIT_RAW | grep "Req_ " | wc -l)
 
 kill $FOO_PID
 
-if [[ $RS -ne 0 ]] || [[ $EMPTY -eq 0 ]]
+if [[ $EMPTY -eq 0 ]]
 then
-	echo "requests empty"
-	sed -i '2s/.*/requests=0/' ${PROGPATH}/memory.txt
+	if [[ $RS -ne 0 ]]
+	then
+		sed -i '2s/.*/requests=0/' $LOCAL/memory.txt
+	fi
 else
-	declare -i If=$(echo $EXIT_RAW | grep -o '!' | wc -l)
-	sed -i '2s/.*/requests='$If'/' ${PROGPATH}/memory.txt
+	sed -i '2s/.*/requests='$I'/' $LOCAL/memory.txt
 fi
 
 exit

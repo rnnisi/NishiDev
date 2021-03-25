@@ -13,7 +13,21 @@ rigol = RS.RigolDS1054Z('USB', 'ONLINE')					# Use class RigolDS1054Z
 args = rigol.CmdLinArg(3)					# Dictate minimum number of command line arguements acceptable
 rigol.Connect('AutoConnect')				# AutoConnect. This arguement can be changed to scope address for manual connection if desired
 rigol.SetupDAQ()							# Establish settings, allow program to identify self contained objects specific to experiment
+
+# make embedded file so that FG node knows what experiment to output data too
+ExpDir = rigol.GetExpDir()
+FG_f = "/var/www/html/forFG/Exp.txt"
+FG_fup = open(FG_f, 'w')
+FG_fup.write(FG_f)
+FG_fup.close()
+
+
+
 rigol.StartDAQ(args[1])			# Start data acquisition, allow to run until it has surpassed given RunTime
 print("Program finished. Exiting...")
-ExpDir = rigol.GetExpDir()
+
+
 rigol.Exit()
+
+
+

@@ -1,0 +1,30 @@
+#!/bin/bash 
+
+MasterNode="SET_MASTER"
+post=$(curl $MasterNode.local/forFG/RunSpecs.txt)
+exp=$(curl $MasterNode.local/forFG/Exp.txt)
+LOCAL="/home/pi/NishiDev1.0/FG"
+
+last="$(head -1 $LOCAL/lastRunParams.txt)"
+
+STAT=$(sed '3q;d' $LOCAL/memory.txt)
+
+if [[ $STAT == "busy" ]]
+then
+	echo "busy"
+	exit
+fi 
+
+echo $last
+if [[ $(echo $post | grep -o $last | wc -l) -eq 0 ]]
+then
+	new=$(echo $post | cut -d'*' -f2)
+	echo $new > $LOCAL/RunSpecs.txt
+	update=$(echo $post | cut -d'*' -f1)
+	echo $update > $LOCAL/lastRunParams.txt
+	echo "Update: $update, Exp: $exp"
+	sleep 3s
+	$LOCAL/FGRun_USB.py $exp $update $MasterNode
+fi
+
+ 

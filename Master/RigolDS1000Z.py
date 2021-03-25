@@ -1,5 +1,5 @@
 """
-Last updated 1/17/2021
+Last updated 12/4/2020
 UCSB Dept. of Physics
 Contact: Rebecca Nishide, rnnishide@gmail.com
 """
@@ -18,7 +18,7 @@ DatTran = DataTransfer.DataTransfer()
 
 class RigolDS1054Z:
 	def __init__(self, interface, NetStat):
-		self.path = "LOCAL_DIR" + "/"
+		self.path = "/home/pi/Master" + "/"
 		self.channels = "CHANNELS"
 		self.channels = int(self.channels)
 		self.nickname = "NICKNAME"

@@ -1,0 +1,1 @@
+& 1 ; wait ; 4 & 2 ; sine ; & 4 ; wait ; & 4 ; Action ; & ; Action ; ;

@@ -2,9 +2,9 @@
 
 # read from server instead of own pi so that this works on other pis. need static ip 
 
-SERVER_PI="PANEL_IP"
+SERVER_PI="rnnishiPI0w"
 SELF="NICKNAME"
-PROGPATH="LOCAL_DIR"
+LOCAL="/home/pi/Master"
 RAW=$(ping ${SERVER_PI}.local -c 1)
 echo $RAW
 if [[ $(echo $RAW | grep "cannot\ resolve" | wc -l) -ne 0 ]]
@@ -22,17 +22,17 @@ do
 	NOW=$(curl "${IP}/control_panel/requests.txt")
 	if [[ $(echo $NOW | grep "RESET" | wc -l) -ne 0 ]]
 	then
-		sed -i '2s/.*/requests=0/' ${PROGPATH}/memory.txt
+		sed -i '2s/.*/requests=0/' ${LOCAL}/memory.txt
 	else
 		sleep 1
-		echo "No Reset" >> ${PROGPATH}/reset.txt
+		echo "No Reset" >> ${LOCAL}/reset.txt
 	fi
 	idle='false'
 	if [[ $idle -eq 'false' ]]
 	then
 		if [[ $(echo $NOW | grep "$SELF IDLE" | wc -l) -ne 0 ]]
 		then
-			sed -i '3s/.*/idle/' ${PROGPATH}/memory.txt
+			sed -i '3s/.*/idle/' ${LOCAL}/memory.txt
 			idle='true'
 		fi
 	fi
