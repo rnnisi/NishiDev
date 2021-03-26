@@ -4,7 +4,7 @@
 # Run on master pi (connected to scope)
 SERVER_PI="rnnishiPI0w"
 RAW=$(ping ${SERVER_PI}.local -c 1)
-LOCAL="/home/pi/Master"
+LOCAL="/home/pi/NishiDev1.0/Master"
 if [[ $(echo $RAW | grep "cannot\ resolve" | wc -l) -ne 0 ]]
 then
     echo "Cannot find IP for pi hosting control panel."
@@ -24,8 +24,6 @@ echo "now" $NOW
 echo 
 echo "I_0 " $I_0
 echo "I " $I
-#I_0=0 ## REMOVE LATER
-#I=1001 ## REMOVE LATER
 if [[ $I_0 -eq $I ]]
 then	
 	exit
@@ -54,7 +52,8 @@ for (( i=$I_0+1; $i <=$I; i++ )); do
 	LIVE=$(echo $VAL | grep "RESET" | wc -l)
 	DONE=$(echo $VAL | grep "done" | wc -l)
 	IDLE=$(echo $VAL | grep "IDLE" | wc -l)
-	if [[ $N -eq 0 ]] || [[ $GO -ne 0 ]] || [[ $DONE -ne 0 ]] || [[ $IDLE -ne 0 ]]
+	SUB=$(echo $VAL | grep "submitted" | wc -l)
+	if [[ $SUB -ne 0 ]] || [[ $N -eq 0 ]] || [[ $GO -ne 0 ]] || [[ $DONE -ne 0 ]] || [[ $IDLE -ne 0 ]]
 	then
 		continue
 	fi
@@ -70,7 +69,11 @@ for (( i=$I_0+1; $i <=$I; i++ )); do
 	if [[ "$STAT" == "busy" ]]	# if scope is not busy continue 
 	then
 		echo "pi/scope pairing is busy"
-		curl "${UPDATE}?ReqN=${REQN}&stat=queued&press=done"
+		Q=$(echo $VAL | grep "queued" | wc -l) 
+		if [[ $Q -eq  0 ]]
+		then
+			curl "${UPDATE}?ReqN=${REQN}&stat=queued&press=done"
+		fi
 		kill $FOO_PID
 		exit
 	fi
@@ -91,11 +94,10 @@ for (( i=$I_0+1; $i <=$I; i++ )); do
 		then
 			echo $fgg
 			echo "ID_$REQN*$FG" > /var/www/html/forFG/RunSpecs.txt
-		fi
-		
+		fi		
 		curl "${UPDATE}?ReqN=${REQN}&stat=submitted&press=done"
 		((ST=$(echo $SECONDS)))
-		python3 $LOCAL/USB_Run.py $RT $TRIG $CHANS >/dev/null 2>&1
+		python3 $LOCAL/USB_Run.py $RT $TRIG $REQN $CHANS >/dev/null 2>&1
 		(( rt = $SECONDS-ST ))
 		echo "Data Collection Time: " $rt
 		if [[ (( $SECONDS-ST < $RT+10 )) ]]
@@ -111,7 +113,7 @@ done
 
 EXIT_RAW=$(curl "${IP}/control_panel/requests.txt")
 RS=$(echo $EXIT_RAW | grep "RESET" | wc -l)
-EMPTY=$(echo $EXIT_RAW | grep "Req_ " | wc -l)
+EMPTY=$(echo $EXIT_RAW | grep "Req_" | wc -l)
 
 kill $FOO_PID
 

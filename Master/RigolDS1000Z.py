@@ -13,16 +13,17 @@ from threading import Thread
 import _thread
 from multiprocessing import Process,Pipe
 import DataTransfer
+import datetime
 
 DatTran = DataTransfer.DataTransfer()
 
 class RigolDS1054Z:
 	def __init__(self, interface, NetStat):
-		self.path = "/home/pi/Master" + "/"
-		self.channels = "CHANNELS"
+		self.path = "/home/pi/NishiDev1.0/Master/"
+		self.channels = "2"
 		self.channels = int(self.channels)
-		self.nickname = "NICKNAME"
-		self.serial = "SERIAL"
+		self.nickname = "rnnishiPI0w"
+		self.serial = "DS1ZE214403225"
 		self.interface = interface	# USB, LAN, LXI option 
 		self.NetStat = NetStat	# online or offline data recording
 		self.rm = pyvisa.ResourceManager("@py")
@@ -499,10 +500,13 @@ class RigolDS1054Z:
 		v = list(str(self.raw).split(','))
 		self.CSV_fn = 'Wfm_' + str(count) + '_Ch_' + str(dat_ch) + '.csv'
 		df = open(self.directory + '/' + self.CSV_fn, 'w+')
-		of = open('/var/www/html/NICKNAME/Exp_'+str(self.exp)+'/CSV_files/'+self.CSV_fn, 'w+')
+		of = open('/var/www/html/rnnishiPI0w/Exp_'+str(self.exp)+'/CSV_files/'+self.CSV_fn, 'w+')
 		ydat = []
 		head = v[0] + '--- XINC: ' + str(self.xinc) + '\n' 
-		df.write(head)
+		df.write(self.nickname + " Data: " + str(datetime.datetime.now()) + "\n")
+		df.write(head + "\nID: Exp_" + str(self.exp) + ", " + str(self.argv[3]))
+		of.write(self.nickname + " Data: " + str(datetime.datetime.now()) + "\n")
+		of.write(head + "\nID: Exp_" + str(self.exp) + ", " + str(self.argv[3]))
 		columns =  "Time (seconds), Voltage (V)\n"
 		df.write(columns)
 		for k in range(1, len(v)):
@@ -522,7 +526,7 @@ class RigolDS1054Z:
 	def CallDataFormat(self, count, dat_ch):
 		if self.NetStat == 'ONLINE' and dat_ch != 'bulk':
 			self.SingleGenCSV_Nch(count, dat_ch)
-			subprocess.Popen(['cp ' + self.directory + '/' + self.CSV_fn + ' /var/www/html/NICKNAME/Exp_' + str(self.exp) + '/CSV_files/' + self.CSV_fn], shell = True)
+			subprocess.Popen(['cp ' + self.directory + '/' + self.CSV_fn + ' /var/www/html/rnnishiPI0w/Exp_' + str(self.exp) + '/CSV_files/' + self.CSV_fn], shell = True)
 			DatTran.UploadExperiment(self.DataLines, self.exp, self.CSV_fn)
 		elif self.NetStat == 'OFFLINE' and dat_ch == 'bulk':
 			self.BulkGenCSV_Nch(self.exp)
@@ -632,6 +636,7 @@ class RigolDS1054Z:
 	def GetWaveformSet(self, trig_stat, i):	# use multiprocessing to gather waveform
 		parent_conn, child_conn = Pipe()
 		for j in self.channel_list:
+			print("channel_list:", j)
 			print("    Channel ", j, " data acquired...")
 			p1 = Process(target = self.WriteOutWv, args = ('1200',child_conn, j, trig_stat, i))
 			p1.start()
@@ -639,17 +644,17 @@ class RigolDS1054Z:
 			if stat == 'NoConn':
 				print("No Connection ...")
 				p1.join()
-				return "fail"
+				op= "fail"
 			elif stat == 'BrokenPipe':
 				print("Broken Pipe")
 				time.sleep(0.01)
 				self.ReConnect()
 				p1.join()
-				operation = "pipe fix"
+				op = "pipe fix"
 			else:
 				p1.join()
-				operation =  "success"
-		return operation
+				op =  "success"
+		return op
 	def WriteExpLog(self, RunTime, i):	# Record experiment
 		log = open(self.path + "ExpLog.txt", 'a+')
 		record = "\nExperiment # " + str(self.exp) + ": " + time.asctime() + ", Interface = " + str(self.interface) + ", ChannelList = " + str(self.channel_list) + ", Trigger = " + self.TriggerMode + ", AcqTime = " + str(RunTime) + ", ScopeChecks = " + str(i)
@@ -770,6 +775,11 @@ class RigolDS1054Z:
 		cmd = "cp " + self.TriggerLog + ' ' + self.directory
 		subprocess.Popen([cmd], shell = True)
 		subprocess.Popen(["mv " + self.path + "Exp_" + str(self.exp) + ".txt " + self.directory], shell = True)
+		try:
+			subprocess.check_output(['curl FG-Beta.local/fromFG/Exp_' +str(self.exp) + '-FG-log.txt > ' + str(self.path) + 'Exp_' + str(self.exp) + '/Exp_' + str(self.exp) + '-FG.txt'], shell=True)
+			subprocess.check_output(['curl FG-Beta.local/fromFG/Exp_' +str(self.exp) + '-FG-log.txt > /var/www/html/rnnishiPI0w/Exp_' + str(self.exp) + '/Exp_' + str(self.exp) + '-FG.txt'], shell=True)
+		except: 
+			subprocess.check_output(['echo "No FG file found for this run" > ' + self.path + 'Exp_' + str(self.exp) + '/Exp_' + str(self.exp) + '-FG.txt'], shell=True) 
 		subprocess.check_output(["ls"], shell = True)
 		cmd = "mv " + self.TriggerLog + ' ' + self.directory
 		subprocess.Popen([cmd], shell = True)

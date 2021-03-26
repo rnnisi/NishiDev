@@ -18,7 +18,7 @@ rigol.SetupDAQ()							# Establish settings, allow program to identify self cont
 ExpDir = rigol.GetExpDir()
 FG_f = "/var/www/html/forFG/Exp.txt"
 FG_fup = open(FG_f, 'w')
-FG_fup.write(FG_f)
+FG_fup.write(ExpDir)
 FG_fup.close()
 
 
