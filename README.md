@@ -1,6 +1,6 @@
 # NishiDev Documentation (WIP)
 
-## Beta test
+## My notes for Beta Test
 
 ### Rasperry Pi's
 I am pre-loading the software onto three raspberry pi's, listed here by hostname:
