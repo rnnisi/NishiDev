@@ -1,1 +1,1 @@
-& 1 ; wait ; 4 & 2 ; sine ; & 4 ; wait ; & 4 ; Action ; & ; Action ; ;
+& 1 ; SINE ; & 2 ; DC ; & 1 ; VPP ; 1V & 2 ; OFFSET ; 0.5V & 1 ; FREQ ; 0.1 & 1 ; OUT_ON ; & 2 ; OUT_ON ; & 1 ; WAIT ; 60 & 1 ; OUT_OFF ; & 2 ; OUT_OFF ; ;
