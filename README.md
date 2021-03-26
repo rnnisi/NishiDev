@@ -1,16 +1,39 @@
 # NishiDev Documentation (WIP)
 
-## Beta test:
+## Beta test
 
+### Rasperry Pi's
 I am pre-loading the software onto three raspberry pi's, listed here by hostname:
 * * * 
-**CNTRL-Beta**: acts as server for control panel, remote capabilities (pi0w)
+**rnnishiPI0w:*** Acts as master node, is connected with oscilloscope to collect data and delegates to function generator (pi3). Also hosts control panel
 
-**MASTER-Beta**: Acts as master node, communicates with oscilloscope to collect data and delegates to function generator (pi3)
-
-**FG-Beta**: servant to master node, communicates with function generator. (pi0)
+**FG-Beta**: servant to master node, connected with function generator. (pi0)
 * * *
 I was able to do these configurations by running installation wrappers in the /home/pi directory. It was necessary to already have crontab set up (an editor picked) before running the wrapper for it to work. I believe the installation wrappers are mostly effective at this point, but they may have more bugs, which is why i pre-loaded three pi's with fresh SD cards for the beta test. 
+
+### To Use 
+
+It should be really simple to use. Both rasperry pi's need to be connected by USB to the appropriate device. 
+
+Both Pi's need to be on a local network that you are also on as the user. 
+
+Once both rasperry pi's are powered, hardwired via USB to the function generator/oscilliscope, and connected to your internet or local host, you can access the control panel at the url: 
+
+http://rnnishipi0w.local/control_panel/control_panel.php
+
+This is the user interface. From here, it should be really simple to use. You can submit a request manually or by importing an old request. There are instructions for all the features on the pages. Submit requests to 'rnnishipi0w'. If this hostname is typed incorrectly the request will not be recieved 
+
+It should be pretty easy to use, but here are some of my notes: 
+
+- This program is pretty slow, this is the drawback of scrappy automation. It will probably be a useful tool for long experiments for sensors as it is very hands off. 
+- Both the function generator and scope programs have embedded files with a line that switches between "idle" and "busy" if the device is idle or busy. If that file says busy, the program will not accept another request. In the case of crashes this can sometimes cause the program to freeze. There is a funciton in the control panel website to reset the scope to idle. There is not for the funciton generator, this can be changed manually if necessary by going into: pi@FG-Beta.local:/home/pi/NishiDev/FG/memory.txt
+- My SD card for rnnishiPI0w freezes up, or the Pi3 it is in freezes up. Sometimes it gets really slow. Rebooting/powercygling the scope helps sometimes if you notice things are really slow 
+- I was able to collect data for 24 h, but you only get about 2 waveform CSV sets per minute if always triggered. 
+- Timing the function generator and data acquistion is slow, it is better to continously collect data for longer than the function generator will be active, so that there is data from before and after the function generator is turned on. 
+- The side panel, under rnnishiPI0w, has the link for the data base. Each directory should have a file that also has the function generator program if applicable. Sometimes there are bugs with updating the online data base. 
+- Data for waveforms in the online data base updates live in the linked database. It is good to check at the beggining of a longer run that files are properly being posted. If files are properly being posted online at the beggining (they usually are but there are bugs once and a while), the program generally will work for the whole run. If it is not outputting data files at the start, it will not correct itself. 
+- Function generator log does not update live in the linked data base. It does update live to http://fg-beta.local/fromFG/
+
 
 
 ## Purpose
