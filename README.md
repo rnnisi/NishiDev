@@ -1,8 +1,6 @@
-# NishiDev Documentation (WIP)
+# Beta Test Notes
 
-## My notes for Beta Test
-
-### Rasperry Pi's
+## Rasperry Pi's
 I am pre-loading the software onto three raspberry pi's, listed here by hostname:
 * * * 
 **rnnishiPI0w:*** Acts as master node, is connected with oscilloscope to collect data and delegates to function generator (pi3). Also hosts control panel
@@ -11,7 +9,7 @@ I am pre-loading the software onto three raspberry pi's, listed here by hostname
 * * *
 I was able to do these configurations by running installation wrappers in the /home/pi directory. It was necessary to already have crontab set up (an editor picked) before running the wrapper for it to work. I believe the installation wrappers are mostly effective at this point, but they may have more bugs, which is why i pre-loaded three pi's with fresh SD cards for the beta test. 
 
-### To Use 
+## To Use 
 
 It should be really simple to use. Both rasperry pi's need to be connected by USB to the appropriate device. 
 
@@ -23,7 +21,7 @@ http://rnnishipi0w.local/control_panel/control_panel.php
 
 This is the user interface. From here, it should be really simple to use. You can submit a request manually or by importing an old request. There are instructions for all the features on the pages. Submit requests to 'rnnishipi0w'. If this hostname is typed incorrectly the request will not be recieved 
 
-It should be pretty easy to use, but here are some of my notes: 
+### It should be easy to use, but here are my notes from testing
 
 - This program is pretty slow, this is the drawback of scrappy automation. It will probably be a useful tool for long experiments for sensors as it is very hands off. 
 - Both the function generator and scope programs have embedded files with a line that switches between "idle" and "busy" if the device is idle or busy. If that file says busy, the program will not accept another request. In the case of crashes this can sometimes cause the program to freeze. There is a funciton in the control panel website to reset the scope to idle. There is not for the funciton generator, this can be changed manually if necessary by going into: pi@FG-Beta.local:/home/pi/NishiDev/FG/memory.txt
@@ -35,6 +33,7 @@ It should be pretty easy to use, but here are some of my notes:
 - Function generator log does not update live in the linked data base. It does update live to http://fg-beta.local/fromFG/
 
 
+# NishiDev Documentation (WIP)
 
 ## Purpose
 This software is intended to help researchers test and subsequently optimize sensors which output analog signals. It will collect waveforms, displayed on an oscilloscope, over time. Due to a website GUI and installtion wrappers, there is no need for users to have comfort with any soft of programming. If users would like to develop the software further, there are loopholes written in where many capabilities or alternative uses may be developed accross all code. For example, the existing framework may serve as a useful template for integrating any other SCPI enabled test intruments. 
