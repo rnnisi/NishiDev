@@ -21,7 +21,7 @@ http://rnnishipi0w.local/control_panel/control_panel.php
 
 This is the user interface. From here, it should be really simple to use. You can submit a request manually or by importing an old request. There are instructions for all the features on the pages. Submit requests to 'rnnishipi0w'. If this hostname is typed incorrectly the request will not be recieved 
 
-### It should be easy to use, but here are my notes from testing
+### It should be self explantory once you are on the control panel, but here are my notes from testing
 
 - This program is pretty slow, this is the drawback of scrappy automation. It will probably be a useful tool for long experiments for sensors as it is very hands off. 
 - Both the function generator and scope programs have embedded files with a line that switches between "idle" and "busy" if the device is idle or busy. If that file says busy, the program will not accept another request. In the case of crashes this can sometimes cause the program to freeze. There is a funciton in the control panel website to reset the scope to idle. There is not for the funciton generator, this can be changed manually if necessary by going into: pi@FG-Beta.local:/home/pi/NishiDev/FG/memory.txt
