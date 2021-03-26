@@ -29,8 +29,9 @@ class DataTransfer:
 		contents = contents.split('\n')
 		return list(contents)
 	def MakeDir(self, exp_n):
-		subprocess.Popen(['mkdir /var/www/html/NICKNAME/Exp_' + str(exp_n)], shell = True)
-		subprocess.Popen(['mkdir /var/www/html/NICKNAME/Exp_' + str(exp_n) + '/CSV_files'], shell = True)
+		subprocess.Popen(['mkdir /var/www/html/rnnishiPI0w/Exp_' + str(exp_n)], shell = True)
+		subprocess.Popen(['mkdir /var/www/html/rnnishiPI0w/Exp_' + str(exp_n) + '/CSV_files'], shell = True)
+		subprocess.Popen(['ls /var/www/html/rnnishiPI0w/Exp_'+str(exp_n)], shell=True)
 	def GetData(self, data, exp_n, fn):
 		try:
 			data = self.ReadFile("./Exp_" + str(exp_n) + "/" + fn)
@@ -39,7 +40,7 @@ class DataTransfer:
 			print("Data file for Exp_", exp_n, "not found in directory")
 			return "failed"
 	def UploadExperiment(self, data, exp_n, fn):
-		outfile = "/var/www/html/NICKNAME/Exp_" + str(exp_n) + '/' + str(fn)[0:len(str(fn)) - 3] + "php"
+		outfile = "/var/www/html/rnnishiPI0w/Exp_" + str(exp_n) + '/' + str(fn)[0:len(str(fn)) - 3] + "php"
 		print("datatran: ", outfile)
 		OF = open(outfile, 'w+')
 		OF.write("<!DOCTYPE html>")
@@ -54,7 +55,7 @@ class DataTransfer:
 	def UploadData(self):
 		for i in self.args:
 			self.MakeDir(i)
-			ls = subprocess.check_output(["ls /var/www/html/NICKNAME"], shell = True)
+			ls = subprocess.check_output(["ls /var/www/html/rnnishiPI0w"], shell = True)
 			try:
 				FN_List = self.GetUpload_FN_List(i)
 				for j in FN_List:
@@ -70,15 +71,15 @@ class DataTransfer:
 		log.write("\n" + add)
 		log.close()
 	def UpdateExpLog(self, txt):
-		f = "/var/www/html/NICKNAME/ExpLog.php"
+		f = "/var/www/html/rnnishiPI0w/ExpLog.php"
 		self.UpdateOnline(txt, f)
 	def UpdateTrigLog(self, txt, exp_n):
-		f = "/var/www/html/NICKNAME/Exp_" + str(exp_n) + "/Exp_" + str(exp_n) + "_TriggerLog.php"
+		f = "/var/www/html/rnnishiPI0w/Exp_" + str(exp_n) + "/Exp_" + str(exp_n) + "_TriggerLog.php"
 		self.UpdateOnline(txt, f) 
 	def GetDownload_FN_List(self, pi, exp_n):
 		try:
-			CheckNICKNAME = "curl http://" + str(IP) + "/" + pi	+ "/Exp_" + str(exp_n) + "/"
-			contents = subprocess.check_output([CheckNICKNAME], shell = True).decode('utf-8')
+			CheckrnnishiPI0w = "curl http://" + str(IP) + "/" + pi	+ "/Exp_" + str(exp_n) + "/"
+			contents = subprocess.check_output([CheckrnnishiPI0w], shell = True).decode('utf-8')
 		except:
 			print("Not connected to correct network. Scope data is on scope's local server; ensure you are connected to the correct network...\nExiting...")
 		contents = re.split('<|>|=|"', contents)
@@ -92,7 +93,7 @@ class DataTransfer:
 			self.FN_LIST.append(i[:len(i)-4])
 		return self.FN_LIST
 	def WriteBackData(self, IP, FN, extension, exp_n):
-		CurlFile = "curl http://" + str(IP) + "/NICKNAME/Exp_" + str(exp_n) + "/" + str(FN) + ".php"
+		CurlFile = "curl http://" + str(IP) + "/rnnishiPI0w/Exp_" + str(exp_n) + "/" + str(FN) + ".php"
 		OutFile = "./Exp_" + str(exp_n) + "/" +  str(FN) + "." + extension
 		DF = open(OutFile, 'w+')
 		data = subprocess.check_output([CurlFile], shell = True)

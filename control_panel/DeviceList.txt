@@ -1,0 +1,3 @@
+rnnishi: My Pi 4  ! 
+PhotonCount: Scope connected to single photon detector ! 
+rnnishiPI0w: connected to Rigol 2channel scope. Also hosting control panel ! 
