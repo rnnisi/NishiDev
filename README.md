@@ -48,7 +48,7 @@ I developed it for my lab because we needed to scale up our process for testing 
 
 ## Overview 
 
-### Architecture
+### Basic notes on Architecture
 The software has one user facing end, which is a system of servers. The user and the sensor facing end can interact with these servers. There can be many sensor facing ends for one user facing end. There should be one user end on one local network. 
 ![SCHEME](https://github.com/rnnisi/NishiDev/blob/main/Figures/Schematic.png)
 
@@ -98,7 +98,7 @@ This repository should be cloned and installed into the /home/pi directory. If n
 - _thread
 - multiprocessing
 
-## Contents
+## Notable files+directories included
 
 ### GetNishiDev.sh
 Shell script which will get a raspberry-pi ready to run this softare and pull code from this repo. Intended for users who are not familiar with linux installations or programming in general. Users must email me to get permission to run this script. 
@@ -139,10 +139,33 @@ Runs in background on sensor facing Pi so that Pi can listen to troubleshooting 
 ### /control_panel
 This directory contains all the backend, mostly php files, for the remote control panel. 
 
+### FGcheck_requests.sh
+Checks if there is a new request for fg, gets requests
 
+### FGRun_USB.py
+Runs FG program using embedded file which holds requests
 ## For Future Developers
 
-### Syntax for instrument control commands 
+### SiglentSDG1000X.py
+This is the library which contains a class with all of the SCPI based functions to control the Siglent function generator. All functions are indexed into a library that is self contained in the class so that functions may be called by keys. 
+
+### RunSpecs.txt
+This is the file which contains the last or currently active command set for the function generator 
+
+### lastRunparams.txt
+Contains the ID for the last job, so that function generator only starts running if there is a new request made (and it is not already running something. 
+
+### Job ID's
+
+Each request has an ID: Req_x. These requests are numerically ordered as given in the control panel. 
+
+Each job on a master node as an ID: Exp_n. These experiments are numerically ordered as recieved by the master node. 
+
+Each function generator run has an ID: FG-Run_m.txt. These runs are numerically ordered as recieved by the function generator node. 
+
+Each node will have all three ID values (if possible). 
+
+### Syntax for requests to intruments
 
 Each run is dictated by a Request, given its own ID, which contains all the information for configuration and data collection for the duration of the run. 
 
@@ -159,7 +182,7 @@ This program uses its own syntax to publish requests such that requests are able
 
 For future development, it is reccomended that additional characters, such as "+, -, <, >" and so on. Use of these characters to standardize the commands sent between ends is to avoid complications due to string processing between different languages and environments. 
 
-### How the system interacts with the sensor
+## Exchange of information between nodes (a lot of curl scraping)
 
 The python script which runs the master node and controls the oscilloscope for data collection is relatively intricate and specifically structured to its function. However code for the control and automation of peripheral instruments which respond to the master node can follow the same basic structure between different intruments.  Included is a library to interact with a Siglent Function generator. **A good project for a future developer could be adding in code for a variable power source, following the infrastructure already built to implement the function generator. **
 
@@ -194,4 +217,12 @@ Sometimes the scope freezes or will reset, and you may need to be physically pre
 ### This is for testing purposes, it is not replacement for fast data acqusition systems.
 It takes about a second to get each waveform; getting four waveforms takes four seconds. 
 
+### There are bugs in installation scripts
+The actual software has been tested and all works to my knowledge, but there are issues with the installation scripts. These mostly seem to be due to slight differences in how different SD cards are configured for a raspberry pi. For foolproof use, it would be best to copy the SD cards I have given for testing, and then search and replace through the whole program to correct node names. For example, the beta-test I set up has the master node name "rnnishiPI0w". To get a second master node running for a second lab on a pi with the hostname 'Master2', the SD card of rnnishiPI0w should be copied, then 's/rnnishiPI0w/Master2/ ./*/* to update the program for the new master node. The same tactic will need to be used for the function generator nodes as well. 
 
+### It is the users job to configure timing between function generator runs and data collection with the scope properly so that the two nodes run processes in paralell. Communication between these nodes is limited, and poor timing could cause experiments to be ruined by improper timing. 
+
+### For true remote capability, use pi VPN to access the control panel while out of the network 
+
+### There is room and infrastructure for future developers to build out.
+I tried to leave helpful comments and well structured code so that another programmer can go in and build out/alter this program for other needs. Developers are welcome to contact me with questions. 
