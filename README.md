@@ -40,7 +40,7 @@ This software is intended to help researchers test and subsequently optimize sen
 
 This software fascilliates remote control of automated data collection by adapting an oscilloscope with software for a raspberry pi. Remote control for researchers is executed by a system of servers, which are the "User End" of the software. The researcher can access the end system, a website GUI, to request experiments or other actions. Raspberry Pi's should get a copy of the NishiDev software and be configured on the network such that they can receieve requests from the end system. All devices should be on a local host, such that the end system can be accessed from any endpoint. Data is organized into an online data base as it is generated. The online data base can backed up automatically, and analysis can be done automatically with scripts submitted by users. These capabilities will be customized by the user, not directly written in, because the program is intended for general use. 
 
-ith a browser and wifi capability connected to the local host. For true remote capability, a VPN should be used to access the local network.
+This software depends on a local host to connect everything. Pi VPN is reccomended for truly remote function.
 
 
 I developed it for my lab because we needed to scale up our process for testing sensors at a low cost. 
@@ -49,11 +49,10 @@ I developed it for my lab because we needed to scale up our process for testing 
 ## Overview 
 
 ### Architecture
-The software has one user facing end, which is a system of servers. The user and the sensor facing end can interact with these servers. 
+The software has one user facing end, which is a system of servers. The user and the sensor facing end can interact with these servers. There can be many sensor facing ends for one user facing end. There should be one user end on one local network. 
 ![SCHEME](https://github.com/rnnisi/NishiDev/blob/main/Figures/Schematic.png)
 
-### GUI
-This software uses a website as a GUI. The user can fill out HTML forms on the site to execute actions on the network. 
+The front end supports a website, which is an intuitive for use GUI. The user can fill out HTML forms on the site to execute actions on the network. 
 ![GUI](https://github.com/rnnisi/NishiDev/blob/main/Figures/GUI.png)
 
 ### Use Case
@@ -71,6 +70,8 @@ This program is meant to be run on a Linux OS on a Rapberry Pi.
 
 Installation wrapper will check your if your computer is compatible and install all necessary packages and libraries (with permission). 
 
+This repository should be cloned and installed into the /home/pi directory. If needed in another location, code will need to be altered. 
+
 ### Hardware Necessities 
 - Rapberry Pi with Wifi (one per instrument)
 - Rigol DS1000 series oscilloscope (others may be compatible, have only tested this series)
@@ -83,7 +84,8 @@ Installation wrapper will check your if your computer is compatible and install 
 - Apache 
 - python3 environment
 - linux shell environment
-- crontab
+- crontab, reccomended that it is configured before installation to allow wrappers to work properly.
+- php environment, must recognize .php files and execute as php (as exposed to executing as HTML)
 
 
 ### Python Libraries 
@@ -97,6 +99,7 @@ Installation wrapper will check your if your computer is compatible and install 
 - multiprocessing
 
 ## Contents
+
 ### GetNishiDev.sh
 Shell script which will get a raspberry-pi ready to run this softare and pull code from this repo. Intended for users who are not familiar with linux installations or programming in general. Users must email me to get permission to run this script. 
 
@@ -108,6 +111,7 @@ Library to adapt Rigol DS1000Z series scope for data acquisition. There are a lo
 
 ### FunctionGenerator.py
 Control a function generator. Takes remote control commands to turn outputs on and off, specify output type, specify parameters of output, and specify wait times between changes in output. Will also log all changes made to system, and the status of the system after each change. Data will be uploaded to data base. 
+
 ### USB_Run.py
 Sensor facing program, run to get data by integrating oscilloscope into system. Scope and Pi running program should be connected via USB cable.  Runs with command line arguements for RunTime, Trigger status, and optionally channels.
 
@@ -132,11 +136,9 @@ Run with crontab on sensor facing Pi so that Pi listens to control servers and e
 ### check_reset.sh
 Runs in background on sensor facing Pi so that Pi can listen to troubleshooting requests while running jobs. 
 
-### DataRefresh.sh (coming soon!)
-Backup data to a more powerful computer. Wipe data from RPi's periodically to avoid running out of memory. Optionally will automatically run analysis scripts and add  files with more specific data to experimental directories. (Useful if one Pi is running the same experiment over and over again, avoid manually analyzing data). There will be an option added to the GUI to submit analyis scripts to be run automatically. 
+### /control_panel
+This directory contains all the backend, mostly php files, for the remote control panel. 
 
-### /UserEnd
-Contains all code needed to run on server and support online GUI. Scripting done in PHP, structured in HTML, CSS styling. Live updates for data acqusition, run requests, and devices status. This is the support and the actual code for the endsystem. Any device accessing the control panel from a browser to submit requests or get data is intended endpoint. The website is intended as a user friendly GUI. Along with the installation wrappers, this should circumvent any need for users to have any programming savvy. 
 
 ## For Future Developers
 
@@ -148,22 +150,17 @@ This program uses its own syntax to publish requests such that requests are able
 
 | Characters | Meaning |
 | --- | --- |
-| Req_xxx: | First line of new request, this is the ID of the request|
-| ; | Seperates information | 
-| & | New set of commands to follow for Function generator program to execute | 
-| $1=$2 | $1 is some parameter specific to a certain command, $2 is the value that parameter should be set to | 
+| Req_xxx: | This is the ID of the request, which is the first item in the line. Each line is one request|
+| ; | Seperates information within a command sest| 
+| & | Seperates command sets for function generator| 
 | , | Seperates parameter specifiers meant for one action| 
-| ! | End of command set | 
+| ! | Seperates command sets meant for different intruments, such that ncommand sets following are for a different intrument than sets before| 
+| $ | End of request| 
 
-Each new Request is on a new line in "requests.txt". It is reccomended that additional characters, such as "+, -, <, >" and so on. Use of these characters to standardize the commands sent between ends is to avoid complications due to string processing between different languages and environments. 
+For future development, it is reccomended that additional characters, such as "+, -, <, >" and so on. Use of these characters to standardize the commands sent between ends is to avoid complications due to string processing between different languages and environments. 
 
 ### RunFiles
 
-Reseachers often want to replicate runs, or change just one thing from the last run. Therefore it is an option to import old "RunFiles", or sets of commands, to avoid tediously retyping in every experiment. 
-
-This is really just parsing the requests.txt for the run, given by ID, and then loading that line. 
-
-This line is displayed as text which can be edited to alter small parameters. 
 
 ### Structure of Peripheral Instrument Control Python Classes
 
