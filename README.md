@@ -68,7 +68,7 @@ The image below depicts a 12 hour full use case I executed to test my software w
 ## Program Requirements
 This program is meant to be run on a Linux OS on a Rapberry Pi.
 
-Installation wrapper will check your if your computer is compatible and install all necessary packages and libraries (with permission). 
+Installation wrapper will check your if your computer is compatible and install all necessary packages and libraries (with permission). They are somewhat buggy still. Especialy important is checking that the names of all the nodes are properly inputted into shell scripts, as these dictate where each node is looking for messages from other nodes. It is also important to note that this program heavily relies on crontab, which runs from root. Therefore all files need to have full paths explicitly written into the code. It is not reccomended to move files around. 
 
 This repository should be cloned and installed into the /home/pi directory. If needed in another location, code will need to be altered. 
 
@@ -159,38 +159,29 @@ This program uses its own syntax to publish requests such that requests are able
 
 For future development, it is reccomended that additional characters, such as "+, -, <, >" and so on. Use of these characters to standardize the commands sent between ends is to avoid complications due to string processing between different languages and environments. 
 
-### RunFiles
+### How the system interacts with the sensor
 
+The python script which runs the master node and controls the oscilloscope for data collection is relatively intricate and specifically structured to its function. However code for the control and automation of peripheral instruments which respond to the master node can follow the same basic structure between different intruments.  Included is a library to interact with a Siglent Function generator. **A good project for a future developer could be adding in code for a variable power source, following the infrastructure already built to implement the function generator. **
 
-### Structure of Peripheral Instrument Control Python Classes
+The master node scrapes the requests page, taking jobs adressed to itself. The master node also configures, starts, and stops data collection through the oscilloscope. Each master node hosts its own online database, which is linked on the control panel. The master node publishes commands for the function generator. The function generator node is constantly scraping the published commands hosted by the master nodes. As soon as it finds a new set of commands, it will execute them. It will log all of the activity, and post that on its own online file. Upon completion of the run, the Master node will collect the activity log from the function generator node and copy it into the directory for the experiment in the online database. 
 
-The python script which controls the oscilloscope for data collection is relatively difficult to generalize. However control and automation of peripheral instruments intended for controlling aspects of the sensor environment; such as a function generator, variable power source, or light, are much more basic to interact with. 
+The function generator recieves a list of commands in sets as published on the requests page. The request syntax for the function generator is:
 
-This software structures the python scripts for control and automation of these peripheral instruments such that more intruments may be added by future developers using the same framework. 
+  & channel, action, parameters
+  
+The channel of course specifies which output channel of the function generator the command is adressed to (1 or 2). The action specifies how the output should be changed, and parameters is the value of that change if applicable. Each action is a key for a python dictionary in the library running on the function generator node. The key returns a function in the function generator class that, when run, will execute the action, taking input parameters (such as frequency or amplitude) if necessary. 
 
-The peripheral intrument control python scripts receieve commands as published onto the requests page. Each peripheral intrument will recieve commands from the Pi communicating with the oscilloscope, such that the Pi connected to the scope may be thought of as the master node for that sensor environment. The Pi's connected to peripheral intruments will recieve commands via scraping the "subrequests.txt" page that the master node publishes. Then those commands will be sent as input arguements to run the peripheral intrument control scripts. 
+Users can manually enter the runs by inputting into dynamic HTML forms supported with JavaScript, or by importing an old run and optionally altering the run in a textbox. It is up to the user to specificy the timing properly such that the function generator and data collection timing is compatible. "wait" times designate time intervals in which the function generator node should sit passively at the specified settings while data is collected. 
 
-Each peripheral intrument should be connected to one raspberry pi running the approrpiate software. These peripheral intruments generally have basic one line commands. For example for a function generator, say a researcher wants to collect data for one hour with a controlled input electronic signal: 
+The function generator program does not have as robust error handling as the function generator, as it is less susceptible to freezing and loss of data. If a command is incorrectly issued by the user or the function generator is not responding properly, the state of the function generator will be reported and data will be collected regardless. **It is up to the user to ensure that the function generator was executing its outputs correctly by checking the actvity logs, as a incorrectly issued command could fail to change function generator output channels as desired, causing deceptive data. It is reccomended to have one channel of the oscilliscope monitoring input signals to avoid mishaps.**
 
-  Turn on channel 1
-  Output a sine wave with a 1V peak to peak amplitude at frequence = 10kHz from channel 1
-  Turn off channel 1 after 1 hour
+Below is a directory tree to help show how data/processes are structured in this system. Dark blue indicates the directory files below are in, pink indicates the file is available on the local netowork via any connected device, and green indicates an actual file in the directory. 
 
-The sensor facing program attachted to the function generator will receieve commands specifying this run from the master node, which is executing 1 hour data collection. Each command for the function generator will be in the following structure: 
-  & Channel, Action, Parameters 
- 
- Which in this case will look like the following commands: 
- 
-  & 1; ON, 
-  & 1; SINE; freq=10kHz  Vpp=1.0V
-  & 1; WAIT; time=3600
-  & 1; OFF
- 
-This data is processed via string processing and passed to the sensor facing program communicating with the function generator as command line arguements. "WAIT" indicates that the processing program should wait before passing the following command to the function generator, sucht that channel 1 will output a sine wave as desired for a full hour before turning off. The program controlling the function generator is a class of functions which uses SCPI to execute actions desired. Each function is entered into a dictionary. The key is the command given in a request, while the value is the name of the function. Thus, the first command line arguement may be used as a key to return the function the user asked for. Following parameters are arguements for that function. 
-
-After each command, the status of the intrument is requested, recieved, and reccorded such that a researcher may check if there were any issues during the run. That data log will be submitted to the appropriate experimental directory via HTML forms so that all information on the run is found in the same place. 
+![Tree](https://github.com/rnnisi/NishiDev/blob/main/Figures/Directories.png)
 
 This structure may be replicated for many other intruments that use SCPI to increase control over the environment the sensor is tested in. 
+
+There are intructions in the control panel websites for user convenience, so I will not go into detail on how to fill out forms in this documentation. 
   
 ## Important Notes for Use
 
