@@ -31,7 +31,7 @@ This is the user interface. From here, it should be really simple to use. You ca
 - The side panel, under rnnishiPI0w, has the link for the data base. Each directory should have a file that also has the function generator program if applicable. Sometimes there are bugs with updating the online data base. 
 - Data for waveforms in the online data base updates live in the linked database. It is good to check at the beggining of a longer run that files are properly being posted. If files are properly being posted online at the beggining (they usually are but there are bugs once and a while), the program generally will work for the whole run. If it is not outputting data files at the start, it will not correct itself. 
 - Function generator log does not update live in the linked data base. It does update live to http://fg-beta.local/fromFG/
-
+- Trying to read a signal that is not displayed on the physical screen of the oscilloscope will not work, and the scope will get confused. It does not process signals not in the display range.
 
 # NishiDev Documentation (WIP)
 
