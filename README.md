@@ -33,7 +33,7 @@ This is the user interface. From here, it should be really simple to use. You ca
 - Function generator log does not update live in the linked data base. It does update live to http://fg-beta.local/fromFG/
 - Trying to read a signal that is not displayed on the physical screen of the oscilloscope will not work, and the scope will get confused. It does not process signals not in the display range.
 
-# NishiDev Documentation (WIP)
+# NishiDev Documentation
 
 ## Purpose
 This software is intended to help researchers test and subsequently optimize sensors which output analog signals. It will collect waveforms, displayed on an oscilloscope, over time. Due to a website GUI and installtion wrappers, there is no need for users to have comfort with any soft of programming. If users would like to develop the software further, there are loopholes written in where many capabilities or alternative uses may be developed accross all code. For example, the existing framework may serve as a useful template for integrating any other SCPI enabled test intruments. 
