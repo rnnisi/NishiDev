@@ -226,3 +226,16 @@ The actual software has been tested and all works to my knowledge, but there are
 
 ### There is room and infrastructure for future developers to build out.
 I tried to leave helpful comments and well structured code so that another programmer can go in and build out/alter this program for other needs. Developers are welcome to contact me with questions. 
+
+## Potential mini-projects for future developers 
+
+- Integrate PiVPN into the whole package for true remote access
+- Completing installation wrapper, and adressing inconsistencies between slightly different Rpi setups
+- Adding more features to control panel to play with webscripting (**Javascript, php, HTML**)
+- Improving timing. Two things I wanted to do were a) being able to schedule jobs, b) communication between the scope and function generator to start and end at the same time. (**bash**)
+- Speed up different processes. Substitute the scraping/crontab system for something faster, replace python with C, etc.... lots of room for creativity (and improvement) there. (**bash, C, python, something I dont even know exits probably!**)
+- Make the function generator responsive. For example, every third time the scope is triggered by the intrument being tested, increase the amplitude of sine wave output on channel 1 by 10 mV. (**bash and/or python&&)
+- Add script to automate backing up and cleanup of data, integrate a high storage harddrive to do so (**bash and/or python)
+- Add feature to submit scripts to automate data processing, or write some generic processing scripts which can run automatically when a user sets them to do so. (**javascript, bash, php, HTML, maybe python)
+- Integrate power source (**python**)
+- debugging every part (duh) (**javascript, bash, php, HTML)
